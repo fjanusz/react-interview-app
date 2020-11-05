@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Image, Input, SimpleGrid, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, Flex, Image, Input, Stack, Text } from '@chakra-ui/core';
 import React from 'react';
 import loginImage from '../images/loginBackground.png';
 
