@@ -1,29 +1,29 @@
 import Axios from "axios";
 import { useEffect, useState } from "react";
 
-export const useGetProducts = (search: string, pageIndex: number, active: boolean, promo: boolean, setStatus: Function) => {
-    type ProductsType = {
-        items: {
-            id: number,
-            name: string,
-            description: string,
-            rating: number,
-            image: string,
-            active: boolean,
-            promo: boolean,
-        }[],
-        links: {
-            first: string,
-            last: string,
-            next: string,
-            previous: string,
-        },
-        meta: {
-            currentPage: number,
-            totalPages: number
-        },
-    };
+type ProductsType = {
+    items: {
+        id: number,
+        name: string,
+        description: string,
+        rating: number,
+        image: string,
+        active: boolean,
+        promo: boolean,
+    }[],
+    links: {
+        first: string,
+        last: string,
+        next: string,
+        previous: string,
+    },
+    meta: {
+        currentPage: number,
+        totalPages: number
+    },
+};
 
+export const useGetProducts = (search: string, pageIndex: number, active: boolean, promo: boolean, setStatus: Function) => {
     const [products, setProducts] = useState<ProductsType>();
 
     useEffect(() => {
