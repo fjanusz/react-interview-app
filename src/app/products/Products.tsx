@@ -12,7 +12,8 @@ import {
   SimpleGrid,
   Spinner,
   Stack,
-  Text
+  Text,
+  useDisclosure
 } from '@chakra-ui/core';
 import ReactPaginate from 'react-paginate';
 import React, { useState } from 'react';
@@ -20,15 +21,22 @@ import React, { useState } from 'react';
 import theme from '../theme';
 import productImage from '../images/product.png';
 import { useGetProducts } from 'app/hooks/hooks';
+import DetailsModal from '../modals/DetailsModal';
 
 type StatusType = "loading" | "error" | "success";
-
+type ModalState = {
+  image: string,
+  description: string,
+  name: string,
+}
 export const Products = () => {
   const [pageIndex, setPageIndex] = useState(1);
   const [active, setActive] = useState(false);
   const [promo, setPromo] = useState(false);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<StatusType>("loading")
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [modalState, setModalState] = useState<ModalState>({ image: "", description: "", name: "" });
 
   const products = useGetProducts(search, pageIndex, active, promo, setStatus);
   const onChangePage = (pageNumber: any) => {
@@ -77,25 +85,31 @@ export const Products = () => {
       {products?.items.length !== 0 && (
         <>
           <SimpleGrid columns={[1, 2, 4]} spacing={6} p={12}>
-            {products?.items.map((product, index) => (
-              <Box key={index} bg="white" borderRadius={8} pb={6}>
-                {product.promo && (
-                  <PseudoBox bg="standardOrange" color="#fff" pos="absolute" mt={6} px={6} py={2} zIndex={1}>
-                    Promo
-                  </PseudoBox>
-                )}
-                <Image src={product.image} w="100%" roundedTop={8} opacity={product.active ? 1 : 0.5} />
-                <Stack spacing={3} p={6}>
-                  <Text color="standardBlack" fontWeight={600}>{product.name}</Text>
-                  <PseudoBox height={16}>
-                    <Text color="darkGray" fontSize="sm">{product.description}</Text>
-                  </PseudoBox>
-                  <Button {...theme.buttons.full} isDisabled={!product.active} justifySelf="flex-end">
-                    {product.active ? "Show details" : "Unavailable"}
-                  </Button>
-                </Stack>
-              </Box>
-            ))}
+            {products?.items.map((product, index) => {
+              const onClick = () => {
+                setModalState({ image: product.image, description: product.description, name: product.name });
+                onOpen();
+              }
+              return (
+                <Box key={index} bg="white" borderRadius={8} pb={6}>
+                  {product.promo && (
+                    <PseudoBox bg="standardOrange" color="#fff" pos="absolute" mt={6} px={6} py={2} zIndex={1}>
+                      Promo
+                    </PseudoBox>
+                  )}
+                  <Image src={product.image} w="100%" roundedTop={8} opacity={product.active ? 1 : 0.5} />
+                  <Stack spacing={3} p={6}>
+                    <Text color="standardBlack" fontWeight={600}>{product.name}</Text>
+                    <PseudoBox height={16}>
+                      <Text color="darkGray" fontSize="sm">{product.description}</Text>
+                    </PseudoBox>
+                    <Button {...theme.buttons.full} onClick={onClick} isDisabled={!product.active} justifySelf="flex-end">
+                      {product.active ? "Show details" : "Unavailable"}
+                    </Button>
+                  </Stack>
+                </Box>
+              )
+            })}
           </SimpleGrid>
           {products && products.meta.totalPages > 1 &&
             <ReactPaginate
@@ -110,6 +124,7 @@ export const Products = () => {
           }
         </>
       )}
+      <DetailsModal isOpen={isOpen} onClose={onClose} state={modalState} />
     </PseudoBox>
   );
 };

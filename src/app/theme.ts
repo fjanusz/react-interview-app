@@ -27,6 +27,7 @@ export default {
       color: "lightBlue",
       background: "#FFFFFF",
       borderRadius: "4px",
+      fontSizes: "sm",
       _hover: {
         color: "darkblue",
         borderColor: "darkBlue",
