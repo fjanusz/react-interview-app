@@ -38,6 +38,7 @@ type ModalState = {
   description: string,
   name: string,
 }
+
 export const Products = () => {
   const [pageIndex, setPageIndex] = useState(1);
   const [active, setActive] = useState(false);
