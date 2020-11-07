@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   Checkbox,
@@ -13,15 +14,23 @@ import {
   Spinner,
   Stack,
   Text,
-  useDisclosure
+  useDisclosure,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem
 } from '@chakra-ui/core';
 import ReactPaginate from 'react-paginate';
 import React, { useState } from 'react';
+import BeautyStars from 'beauty-stars';
 
 import theme from '../theme';
 import productImage from '../images/product.png';
+import avatarImage from '../images/avatar.png';
 import { useGetProducts } from 'app/hooks/hooks';
 import DetailsModal from '../modals/DetailsModal';
+import { useHistory } from 'react-router-dom';
+import { AppRoute } from 'routing/AppRoute.enum';
 
 type StatusType = "loading" | "error" | "success";
 type ModalState = {
@@ -29,6 +38,7 @@ type ModalState = {
   description: string,
   name: string,
 }
+
 export const Products = () => {
   const [pageIndex, setPageIndex] = useState(1);
   const [active, setActive] = useState(false);
@@ -37,8 +47,14 @@ export const Products = () => {
   const [status, setStatus] = useState<StatusType>("loading")
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalState, setModalState] = useState<ModalState>({ image: "", description: "", name: "" });
+  const history = useHistory();
+
+  const redirectToLogin = () => {
+    history.push(AppRoute.login)
+  }
 
   const products = useGetProducts(search, pageIndex, active, promo, setStatus);
+
   const onChangePage = (pageNumber: any) => {
     setPageIndex(pageNumber.selected + 1);
     window.scrollTo(0, 0);
@@ -51,6 +67,10 @@ export const Products = () => {
   const onPromo = () => {
     setPromo(value => !value);
   }
+
+  const user = {
+    login: true
+  };
 
   return (
     <PseudoBox textAlign="center">
@@ -77,8 +97,20 @@ export const Products = () => {
           <Checkbox borderColor="lightGray" variantColor="blue" px={2} onChange={onActive}>Active</Checkbox>
           <Checkbox borderColor="lightGray" variantColor="blue" px={2} onChange={onPromo}>Promo</Checkbox>
         </PseudoBox>
-        <Button {...theme.buttons.outline} alignSelf="center">Log in</Button>
-        {status === "loading" && <Spinner {...theme.spiner} pos="absolute" right="2rem" size="lg" />}
+        {user.login
+          ? (
+            <Menu>
+              <MenuButton as={PseudoBox} m={2}>
+                <Avatar name="Avatar" src={avatarImage} />
+              </MenuButton>
+              <MenuList placement="bottom-end">
+                <MenuItem onClick={redirectToLogin} bg="white" border="none">Logout</MenuItem>
+              </MenuList>
+            </Menu>
+          )
+          : <Button {...theme.buttons.outline} alignSelf="center">Log in</Button>
+        }
+        {status === "loading" && <Spinner {...theme.spiner} pos="absolute" right={["0rem", "1rem"]} size="lg" />}
       </Flex>
       {status === "error" && <Text>Error</Text>}
       {products?.items.length === 0 && <EmptyProductsList />}
@@ -102,6 +134,16 @@ export const Products = () => {
                     <Text color="standardBlack" fontWeight={600}>{product.name}</Text>
                     <PseudoBox height={16}>
                       <Text color="darkGray" fontSize="sm">{product.description}</Text>
+                    </PseudoBox>
+                    <PseudoBox>
+                      <BeautyStars
+                        value={product.rating}
+                        maxStars={5}
+                        size={15}
+                        gap={10}
+                        inactiveColor={theme.colors.lightGray}
+                        activeColor={theme.colors.standardOrange}
+                      />
                     </PseudoBox>
                     <Button {...theme.buttons.full} onClick={onClick} isDisabled={!product.active} justifySelf="flex-end">
                       {product.active ? "Show details" : "Unavailable"}

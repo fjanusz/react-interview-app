@@ -26,7 +26,7 @@ export const Login = () => {
           </Stack>
           <Stack spacing={0}>
             <Text fontSize="xs" color="standardBlack">Password</Text>
-            <Input isFullWidth={false} _focus={{ outline: "none" }} variant="outline" placeholder="password" />
+            <Input isFullWidth={false} _focus={{ outline: "none" }} type="password" variant="outline" placeholder="password" />
           </Stack>
         </Stack>
         <Stack spacing={0} mt="20">
