@@ -22,7 +22,7 @@ interface ToggleProps {
 
 const DetailsModal = (Props: ToggleProps) => {
     return (
-        <Modal size="xl" isOpen={Props.isOpen} onClose={Props.onClose}>
+        <Modal isCentered size="xl" isOpen={Props.isOpen} onClose={Props.onClose}>
             <ModalOverlay />
             <ModalContent rounded="md">
                 <ModalHeader p={0}>
